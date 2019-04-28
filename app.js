@@ -27,7 +27,7 @@ app.get('/posts/new', (req, res) => {
 });
 
 app.get('/posts/:id', (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const post = posts.filter(post => post.id === +id)[0];
   res.render('posts/show', { post });
 });
@@ -52,13 +52,28 @@ app.post('/posts', (req, res) => {
 });
 
 app.get('/posts/:id/edit', (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.render('posts/edit', { id });
 });
 
 app.patch('/posts/:id', (req, res) => {
   const { title, body } = req.body; 
-  console.log(title, body)
+  const { id } = req.params;
+  const post = posts.filter(post => post.id === +id)[0];
+  console.log(post);
+  post.title = title || post.title;
+  post.body = body || post.body;
+  res.redirect(`/posts/${id}`);
+})
+
+app.delete('/posts/:id', (req, res) => {
+  const { title, body } = req.body; 
+  const { id } = req.params;
+  const post = posts.filter(post => post.id === +id)[0];
+  console.log(post);
+  post.title = title || post.title;
+  post.body = body || post.body;
+  res.redirect(`/posts/${id}`);
 })
 
 // app.delet('/posts/:id', (req, res) => {
