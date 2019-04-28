@@ -1,15 +1,21 @@
 extends ../layouts/app.pug
 
 block content
+  a(href='/') Main page 
+  h3 New Blog Post
   form(action='/posts', method='post')
     div
       label
         | Title
         sup *
-      input(name='title')
+      input(name='title' value=form.title)
+      if errors.title
+        h5= errors.title
     div
       label
         | Body
         sup *
-      textarea(rows='10', name='body')
+      textarea(rows='10', name='body')= form.body
+      if errors.body
+        h5= errors.body
     input(type='submit', value='Save')

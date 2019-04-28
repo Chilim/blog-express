@@ -1,0 +1,15 @@
+extends ../layouts/app.pug
+
+block content
+  form(action='/posts?/${id}_method=PATCH', method='post')
+    div
+      label
+        | Title
+        sup *
+      input(name='title')
+    div
+      label
+        | Body
+        sup *
+      textarea(rows='10', name='body')
+    input(type='submit', value='Save')
