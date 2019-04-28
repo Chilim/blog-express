@@ -2,7 +2,6 @@ extends ../layouts/app.pug
 
 block content
   div
-    a(href='/') Main page
     table(class='table')
       tbody           
         tr
@@ -13,6 +12,9 @@ block content
                   a(href='/posts/' + post.id) #{post.title}
                 td 
                   a(href='/posts/' + post.id + '/edit') Edit
+                td
+                  form(action='/posts/' + post.id + '?_method=DELETE', method='post') 
+                    button(class="btn btn-danger") Delete
 
  
     

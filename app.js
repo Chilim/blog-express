@@ -3,13 +3,12 @@ import bodyParser from 'body-parser';
 import Post from './entities/Post';
 import methodOverride from 'method-override';
 
-
 const app = new Express();
 app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 
-const posts = [
+let posts = [
   new Post('hello', 'how are you?'),
   new Post('nodejs', 'story about nodejs'),
 ];
@@ -28,19 +27,22 @@ app.get('/posts/new', (req, res) => {
 
 app.get('/posts/:id', (req, res) => {
   const { id } = req.params;
-  const post = posts.filter(post => post.id === +id)[0];
+  const post = posts.find(post => post.id === +id);
   res.render('posts/show', { post });
 });
 
 app.post('/posts', (req, res) => {
   const { title, body } = req.body;
+
   const errors = {};
   if (!title) {
     errors.title = "Title can't be blank";
   }
+
   if (!body) {
     errors.body = "Body can't be blank";
   }
+
   if (Object.keys(errors).length === 0) {
     const post = new Post(title, body);
     posts.push(post);
@@ -53,32 +55,40 @@ app.post('/posts', (req, res) => {
 
 app.get('/posts/:id/edit', (req, res) => {
   const { id } = req.params;
-  res.render('posts/edit', { id });
+  const post = posts.find(post => post.id === +id);
+  res.render('posts/edit', { post, form: post, errors: {} });
 });
 
 app.patch('/posts/:id', (req, res) => {
   const { title, body } = req.body; 
   const { id } = req.params;
-  const post = posts.filter(post => post.id === +id)[0];
-  console.log(post);
-  post.title = title || post.title;
-  post.body = body || post.body;
-  res.redirect(`/posts/${id}`);
+  const post = posts.find(post => post.id === +id);
+  const errors = {};
+  if (!title) {
+    errors.title = "Can't be blank";
+  }
+
+  if (!body) {
+    errors.body = "Can't be blank";
+  }
+
+  if (Object.keys(errors).length === 0) {
+    post.title = title;
+    post.body = body;
+    res.redirect(`/posts/${post.id}/`);
+    return;
+  }
+  
+  res.status(422);
+  res.render('posts/edit', { post, form: req.body, errors });
 })
 
-// app.delete('/posts/:id', (req, res) => {
-//   const { title, body } = req.body; 
-//   const { id } = req.params;
-//   const post = posts.filter(post => post.id === +id)[0];
-//   console.log(post);
-//   post.title = title || post.title;
-//   post.body = body || post.body;
-//   res.redirect(`/posts/${id}`);
-// })
-
-// app.delet('/posts/:id', (req, res) => {
-  
-// })
+app.delete('/posts/:id', (req, res) => {
+  const { id } = req.params;
+  const deletedPost = posts.find(post => post.id === +id);
+  posts = posts.filter(post => post.id !== deletedPost.id);
+  res.redirect(`/posts/`);
+});
 
 export default app;
 
