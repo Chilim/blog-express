@@ -66,15 +66,15 @@ app.patch('/posts/:id', (req, res) => {
   res.redirect(`/posts/${id}`);
 })
 
-app.delete('/posts/:id', (req, res) => {
-  const { title, body } = req.body; 
-  const { id } = req.params;
-  const post = posts.filter(post => post.id === +id)[0];
-  console.log(post);
-  post.title = title || post.title;
-  post.body = body || post.body;
-  res.redirect(`/posts/${id}`);
-})
+// app.delete('/posts/:id', (req, res) => {
+//   const { title, body } = req.body; 
+//   const { id } = req.params;
+//   const post = posts.filter(post => post.id === +id)[0];
+//   console.log(post);
+//   post.title = title || post.title;
+//   post.body = body || post.body;
+//   res.redirect(`/posts/${id}`);
+// })
 
 // app.delet('/posts/:id', (req, res) => {
   
