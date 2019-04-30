@@ -1,16 +1,22 @@
 doctype html
 html
   head
-    title Blog
+    title= title
     link(href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin="anonymous")
   body
-    nav.navbar.navbar-expand.navbar-light.bg-light
-      a.navbar-brand(href="/") MyBlog
-      ul.navbar-nav.mr-auto
-        li.nav-item
-          a.nav-link(href="/posts/new") Write Post
-        li.nav-item
-          a.nav-link(href="/posts") My Posts
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      a.navbar-brand(href="/") HexletBlogs
+      if currentUser.isGuest()
+        ul.navbar-nav.ml-auto
+          li.nav-item
+            a.nav-link(href="/session/new") Sign in
+          li.nav-item
+            a.nav-link(href="/users/new") Sign up
+      else
+        form.form-inline.float-xs-right(action='/session?_method=DELETE' method='post')
+          button.btn.btn-link(type='submit') Sign out
     .container
-      .mt-1
-        block content
+      block content
+
+
+    
