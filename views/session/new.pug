@@ -4,16 +4,14 @@ block content
   .row.mt-3
     .col-sm-4.mx-auto
       h3.text-xs-center Login
+      if error
+        .alert.alert-warning= error
       form(action='/session' method='post')
         .row.form-group
           .col-sm
             input.form-control(name='nickname' placeholder='nickname' value=form.nickname)
-            if errors.nickname
-              .text-warning= errors.nickname
         .row.form-group
           .col-sm
             input.form-control(name='password' type='password' placeholder='password')
-            if errors.password
-              .text-warning= errors.password
         .form-group
           button.btn.btn-primary.btn-block(type='submit') Sign up

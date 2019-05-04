@@ -1,8 +1,8 @@
 export default class {
   guest = false;
-  constructor(nickname, password) {
+  constructor(nickname, passwordDigest) {
     this.nickname = nickname;
-    this.password = password;
+    this.passwordDigest = passwordDigest;
   }
   isUser() {
     return this.guest;    }

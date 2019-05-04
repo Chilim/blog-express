@@ -1,6 +1,6 @@
 import Express from 'express';
-import morgan from 'morgan';
 import session from 'express-session';
+import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import Post from './entities/Post';
 import methodOverride from 'method-override';
@@ -11,9 +11,9 @@ import User from './entities/User';
 import Guest from './entities/Guest';
 
 const app = new Express();
-app.set('view engine', 'pug');
 app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.set('view engine', 'pug');
 app.use(methodOverride('_method'));
 app.use(session({
   secret: 'secret key',
@@ -21,12 +21,12 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-const users = [new User('admin', encrypt('qwerty'))];
 let posts = [
   new Post('hello', 'how are you?'),
   new Post('nodejs', 'story about nodejs'),
 ];
 
+const users = [new User('admin', encrypt('qwerty'))];
 
 app.use((req, res, next) => {
   if (req.session && req.session.nickname) {
@@ -48,26 +48,31 @@ app.get('/users/new', (req, res) => {
   res.render('users/new', { errors: {}, form: {}});
 });
 
-app.post('/users/', (req, res) => {
+app.post('/users', (req, res) => {
   const { nickname, password } = req.body;
   const errors = {};
-
   if (!nickname) {
-    errors.nickname = 'Please, enter a nickname';
+    errors.nickname = "Can't be blank";
+  } else {
+    const isUniq = users.find(user => user.nickname === nickname) === undefined;
+    if (!isUniq) {
+      errors.nickname = 'Already exist';
+    }
   }
 
   if (!password) {
-    errors.password = 'Please, indicate a password';
+    errors.password = "Can't be blank";
   }
 
   if (Object.keys(errors).length === 0) {
-    const user = new User(nickname, password);
+    const user = new User(nickname, encrypt(password));
     users.push(user);
-    return res.redirect('/');
+    res.redirect('/');
+    return;
   }
+
   res.status(422);
   res.render('users/new', { form: req.body, errors });
-
 });
 
 app.get('/session/new', (req, res) => {
@@ -76,8 +81,16 @@ app.get('/session/new', (req, res) => {
 
 app.post('/session', (req, res) => {
   const { nickname, password } = req.body;
-  console.log(nickname, password);
-})
+  const user = users.find(u => u.nickname === nickname);
+  if (user && user.passwordDigest === encrypt(password)) {
+    console.log('dddd');
+    req.session.nickname = user.nickname;
+    res.redirect('/');
+    return;
+  }
+  res.status(422);
+  res.render('session/new', { form: req.body, error: 'Invalid nickname or password' });
+});
 
 // Posts
 
