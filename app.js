@@ -27,6 +27,7 @@ let posts = [
   new Post('nodejs', 'story about nodejs'),
 ];
 
+
 app.use((req, res, next) => {
   if (req.session && req.session.nickname) {
     const { nickname } = req.session;
@@ -49,8 +50,34 @@ app.get('/users/new', (req, res) => {
 
 app.post('/users/', (req, res) => {
   const { nickname, password } = req.body;
-  console.log(nickname, password);
+  const errors = {};
+
+  if (!nickname) {
+    errors.nickname = 'Please, enter a nickname';
+  }
+
+  if (!password) {
+    errors.password = 'Please, indicate a password';
+  }
+
+  if (Object.keys(errors).length === 0) {
+    const user = new User(nickname, password);
+    users.push(user);
+    return res.redirect('/');
+  }
+  res.status(422);
+  res.render('users/new', { form: req.body, errors });
+
 });
+
+app.get('/session/new', (req, res) => {
+  res.render('session/new', { errors: {}, form: {}});
+});
+
+app.post('/session', (req, res) => {
+  const { nickname, password } = req.body;
+  console.log(nickname, password);
+})
 
 // Posts
 
@@ -131,20 +158,20 @@ app.delete('/posts/:id', (req, res) => {
   res.redirect(`/posts/`);
 });
 
-app.use((req, res, next) => {
-  next(new NotFoundError());
-});
+// app.use((req, res, next) => {
+//   next(new NotFoundError());
+// });
 
-app.use((err, req, res, next) => { // eslint-disable-line
-  res.status(err.status);
-  switch (err.status) {
-    case 404:
-      res.render(err.status.toString());
-      break;
-    default:
-      throw new Error('Unexpected error');
-  }
-});
+// app.use((err, req, res, next) => {
+//   res.status(err.status);
+//   switch (err.status) {
+//     case 404:
+//       res.render(err.status.toString());
+//       break;
+//     default:
+//       throw new Error('Unexpected error');
+//   }
+// });
 
 export default app;
 
