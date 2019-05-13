@@ -4,6 +4,7 @@ export default class {
     this.nickname = nickname;
     this.passwordDigest = passwordDigest;
   }
-  isUser() {
-    return this.guest;    }
+  isGuest() {
+    return this.guest;    
+  }
 }

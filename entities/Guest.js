@@ -1,9 +1,8 @@
 export default class {
-    guest = true;
-  
-    isGuest() {
-      return this.guest;
-    }
+  guest = true;
+
+  isGuest() {
+    return this.guest;
   }
-  
+}
   
